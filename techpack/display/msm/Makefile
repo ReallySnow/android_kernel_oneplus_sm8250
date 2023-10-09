@@ -2,6 +2,7 @@
 ccflags-y := -I$(srctree)/include/drm -I$(srctree)/techpack/display/msm -I$(srctree)/techpack/display/msm/dsi -I$(srctree)/techpack/display/msm/dp
 ccflags-y += -I$(srctree)/techpack/display/msm/sde
 ccflags-y += -I$(srctree)/techpack/display/rotator
+ccflags-y += -I$(srctree)/techpack/display/oplus
 
 msm_drm-$(CONFIG_DRM_MSM_DP) += dp/dp_usbpd.o \
 	dp/dp_parser.o \
@@ -100,6 +101,7 @@ msm_drm-$(CONFIG_DRM_MSM_DSI) += dsi/dsi_phy.o \
 	dsi/dsi_panel.o \
 	dsi/dsi_clk_manager.o \
 	dsi/dsi_display_test.o \
+	dsi/ktz8866_init.o \
 
 msm_drm-$(CONFIG_DSI_PARSER) += dsi/dsi_parser.o \
 
@@ -116,5 +118,26 @@ msm_drm-$(CONFIG_DRM_MSM) += \
 	msm_notifier.o\
 
 obj-$(CONFIG_DRM_MSM)	+= msm_drm.o
+
+#ifdef OPLUS_BUG_STABILITY
+###########################################################################################
+#build oplus so
+msm_drm-$(CONFIG_DRM_OPLUS) += ../oplus/oplus_dsi_support.o \
+	../oplus/oplus_display_private_api.o \
+	../oplus/oplus_dc_diming.o \
+	../oplus/oplus_onscreenfingerprint.o \
+	../oplus/oplus_aod.o \
+	../oplus/oplus_ffl.o \
+	../oplus/oplus_display_panel.o \
+	../oplus/oplus_display_panel_power.o \
+	../oplus/oplus_display_panel_seed.o \
+	../oplus/oplus_display_panel_common.o \
+	../oplus/oplus_display_panel_hbm.o \
+	../oplus/oplus_display_panel_cabc.o \
+#endif /*OPLUS_BUG_STABILITY*/
+
+ifeq ($(OPLUS_FEATURE_ADFR_KERNEL),yes)
+msm_drm-$(CONFIG_DRM_OPLUS) += ../oplus/oplus_adfr.o
+endif #/* OPLUS_FEATURE_ADFR_KERNEL */
 
 obj-$(CONFIG_DRM_FBDEV_EMULATION) += msm_fbdev.o
